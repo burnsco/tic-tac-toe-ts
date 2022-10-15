@@ -45,22 +45,25 @@ type SquareType = {
 function Board() {
   const [xsTurn, { toggle }] = useToggle()
   const [gameBoard, setGameBoard] = useState(initialGameBoard)
+  const winner = calculateWinner(gameBoard)
 
   const Square = ({position, value}:SquareType)=> 
       <div 
-      className="squares"
-      onClick={() => {
+        className="squares"
+        onClick={() => {
         const currBoard = [...gameBoard]
-        if (xsTurn) {
+    
+        if (xsTurn && currBoard[position] === null && !winner) {
+        
           currBoard[position] = 'X'
           toggle()
         
         }
-       if(!xsTurn){
+       if(!xsTurn && currBoard[position] === null && !winner){
           currBoard[position] = 'O'
           toggle()
         }
-
+        
         setGameBoard(currBoard)
       }} 
   
@@ -77,6 +80,7 @@ function resetGame(){
        <div className="top-bar">
       <button onClick={resetGame} type="button" className="reset-button">Reset</button>
       <p>Who's Turn? {xsTurn ? 'X' : 'O'}</p>
+      <p>Is there a winner? {winner}</p>
       </div>
       <div className="board">
       {gameBoard.map(
