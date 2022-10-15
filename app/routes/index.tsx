@@ -1,6 +1,7 @@
 import type { LinksFunction, MetaFunction } from "@remix-run/node";
 import { useState } from "react";
 import stylesUrl from "~/styles/tictac.css";
+import { useToggle } from "~/utils/useToggle";
 
 export const meta: MetaFunction = () => {
   return {
@@ -12,44 +13,75 @@ export const links: LinksFunction = () => {
   return [{ rel: "stylesheet", href: stylesUrl }];
 };
 
-
-function Square () {
-    return (
-      <button className="square">
-        {/* TODO */}
-      </button>
-    );
+function calculateWinner(squares: any) {
+  const lines = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6]
+  ]
+  for (let i = 0; i < lines.length; i++) {
+    const [a, b, c] = lines[i]
+    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+      return squares[a]
+    }
   }
-
-
-function renderSquare(i: number) {
-  return <Square />;
+  return null
 }
 
-function Board() {
-  const [gameBoard, setGameBoard] = useState(Array(9).fill(null))
 
-    const status = 'Next player: X';
+const initialGameBoard = Array(9).fill(null)
+
+type SquareType = {
+  position: number;
+  value: number;
+}
+
+
+function Board() {
+  const [xsTurn, { toggle }] = useToggle()
+  const [gameBoard, setGameBoard] = useState(initialGameBoard)
+
+  const Square = ({position, value}:SquareType)=> 
+      <div 
+      className="squares"
+      onClick={() => {
+        const currBoard = [...gameBoard]
+        if (xsTurn) {
+          currBoard[position] = 'X'
+          toggle()
+        
+        }
+       if(!xsTurn){
+          currBoard[position] = 'O'
+          toggle()
+        }
+
+        setGameBoard(currBoard)
+      }} 
+  
+      >{value}
+    </div>
+    
+  
+  
+  
 
     return (
-      <div>
-        <div className="status">{status}</div>
-        <div className="board-row">
-          {renderSquare(0)}
-          {renderSquare(1)}
-          {renderSquare(2)}
-        </div>
-        <div className="board-row">
-          {renderSquare(3)}
-          {renderSquare(4)}
-          {renderSquare(5)}
-        </div>
-        <div className="board-row">
-          {renderSquare(6)}
-          {renderSquare(7)}
-          {renderSquare(8)}
-        </div>
-      </div>
+      <div className="board">
+      {gameBoard.map(
+        ( square, index ) => 
+          <Square 
+            key={`Square ${index}`} 
+            value={square} 
+            position={index} 
+        />
+      )}
+    </div>
     );
   }
 
