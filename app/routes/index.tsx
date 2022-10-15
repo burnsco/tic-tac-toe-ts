@@ -66,12 +66,18 @@ function Board() {
   
       >{value}
     </div>
+
+function resetGame(){
+  setGameBoard(initialGameBoard)
+}
     
-  
-  
-  
 
     return (
+      <div>
+       <div className="top-bar">
+      <button onClick={resetGame} type="button" className="reset-button">Reset</button>
+      <p>Who's Turn? {xsTurn ? 'X' : 'O'}</p>
+      </div>
       <div className="board">
       {gameBoard.map(
         ( square, index ) => 
@@ -80,7 +86,7 @@ function Board() {
             value={square} 
             position={index} 
         />
-      )}
+      )} </div>
     </div>
     );
   }
@@ -88,8 +94,12 @@ function Board() {
 
 export default function TicTacToeGame(){
 
+
+
+
     return (
       <div className="game">
+     
         <div className="game-board">
           <Board />
         </div>
